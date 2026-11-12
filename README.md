@@ -3,6 +3,10 @@
 Sinfda jonli viktorina o'tkazish uchun sayt: o'qituvchi savollarni katta ekranga chiqaradi,
 o'quvchilar telefonidan PIN kod bilan kirib javob beradi.
 
+**▶ Jonli demo:** https://ikhtiyorbek28.github.io/Bilimdon/ — serversiz: o'qituvchi ekrani va
+o'quvchi telefoni yonma-yon, boshqa o'yinchilar botlar. Demo `docs/` papkasida; sayt fayllari
+o'zgarsa, `python tools/build_docs.py` umumiy fayllarni (`style.css`, avatarlar) u yerga ko'chiradi.
+
 ## Ishga tushirish
 
 Kerak: **Python 3.10+** (boshqa hech narsa o'rnatish shart emas).
