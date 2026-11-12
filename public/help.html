@@ -1,0 +1,241 @@
+<!doctype html>
+<html lang="uz">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Bilimdon — Qo'llanma</title>
+<style>
+  :root{--bg:#f3f6f8;--ink:#14212b;--muted:#5d6b75;--brand:#c2410c;--card:#fff;--accent:#f3a712}
+  body{margin:0;font:16px/1.6 system-ui,-apple-system,Segoe UI,Roboto,sans-serif;background:var(--bg);color:var(--ink)}
+  main{max-width:860px;margin:0 auto;padding:20px 16px 60px}
+  .top{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:10px}
+  .top a{color:var(--brand);font-weight:800;text-decoration:none}
+  .langs{display:flex;gap:6px}.langs button{border:2px solid var(--brand);background:#fff;color:var(--brand);border-radius:8px;padding:4px 12px;font-weight:800;cursor:pointer}
+  .langs button.on{background:var(--brand);color:#fff}
+  h1{font-size:30px;margin:8px 0 4px}h2{font-size:22px;margin:30px 0 10px;scroll-margin-top:10px}
+  .lead{color:var(--muted);font-weight:600;margin:0 0 14px}
+  nav.toc{display:flex;flex-wrap:wrap;gap:6px;margin:12px 0 4px}
+  nav.toc a{background:#fff;border:1px solid #dde3e8;border-radius:999px;padding:4px 12px;font-weight:700;color:var(--brand);text-decoration:none;font-size:14px}
+  .steps{counter-reset:s;display:grid;gap:10px}
+  .step{background:var(--card);border-radius:12px;padding:12px 14px 12px 58px;position:relative;box-shadow:0 1px 3px rgba(0,0,0,.06)}
+  .step::before{counter-increment:s;content:counter(s);position:absolute;left:14px;top:12px;width:30px;height:30px;border-radius:50%;background:var(--accent);color:var(--ink);font-weight:900;display:grid;place-items:center}
+  .step > b:first-child{display:block}
+  .card{background:var(--card);border-radius:12px;padding:12px 16px;box-shadow:0 1px 3px rgba(0,0,0,.06);margin-bottom:10px}
+  table{width:100%;border-collapse:collapse;background:#fff;border-radius:12px;overflow:hidden;box-shadow:0 1px 3px rgba(0,0,0,.06)}
+  td,th{padding:8px 10px;border-bottom:1px solid #eef2f5;text-align:left;vertical-align:top;font-size:15px}th{background:#e3f1f1}
+  td:first-child{white-space:nowrap;font-weight:800}
+  .tip{background:#fff6d6;border-left:5px solid var(--accent);border-radius:8px;padding:10px 12px;margin:10px 0;font-weight:600}
+  details{background:#fff;border-radius:10px;padding:10px 14px;margin-bottom:8px;box-shadow:0 1px 3px rgba(0,0,0,.06)}
+  summary{font-weight:800;cursor:pointer}
+  code,kbd{background:#eef2f5;border-radius:5px;padding:1px 6px;font-size:14px}
+  @media (max-width:520px){td:first-child{white-space:normal}h1{font-size:25px}}
+</style>
+</head>
+<body>
+<main>
+  <div class="top"><a href="/host">← Bilimdon</a><div class="langs"><button data-l="uz">O'zbekcha</button><button data-l="ru">Русский</button><button data-l="en">English</button></div></div>
+
+<!-- ====================== O'ZBEKCHA ====================== -->
+<section data-lang="uz">
+  <h1>📘 O'qituvchilar uchun qo'llanma</h1>
+  <p class="lead">Birinchi viktorinadan to hisobotgacha — 10 daqiqada.</p>
+  <nav class="toc"><a href="#uz-start">Boshlash</a><a href="#uz-create">Viktorina yaratish</a><a href="#uz-types">Savol turlari</a><a href="#uz-play">O'yin o'tkazish</a><a href="#uz-homework">Vazifa va mashq</a><a href="#uz-classes">Sinflar</a><a href="#uz-reports">Hisobotlar</a><a href="#uz-faq">Savollar</a></nav>
+
+  <h2 id="uz-start">🚀 Boshlash</h2>
+  <div class="steps">
+    <div class="step"><b>Ro'yxatdan o'ting</b>"Login" sahifasida "Ro'yxatdan o'tish"ni tanlang. Berilgan <b>tiklash kodini</b> yozib oling — parolni unutsangiz kerak bo'ladi.</div>
+    <div class="step"><b>Namuna viktorinani ko'ring</b>Hisobingizda "Umumiy bilim" namunasi bor: unda barcha savol turlari bor. ▶ O'ynash tugmasi bilan sinab ko'ring.</div>
+    <div class="step"><b>O'yinchilarni ulang</b>O'quvchilar telefonda lobbidagi manzilni yoki QR kodni ochadi, PIN va ismini yozadi. Telefonlar kompyuter bilan bir xil Wi-Fi'da bo'lishi kerak.</div>
+  </div>
+
+  <h2 id="uz-create">✏️ Viktorina yaratish</h2>
+  <div class="steps">
+    <div class="step"><b>"+ Yaratish" tugmasini bosing</b>Nom va (xohlasangiz) tavsif, muqova rasmini kiriting.</div>
+    <div class="step"><b>Savol qo'shing</b>"+ Savol qo'shish" → turini tanlang. Savol matnini yozing, javoblarni kiriting va to'g'risini ✔ bilan belgilang.</div>
+    <div class="step"><b>Sozlang</b>O'ng tomonda: vaqt chegarasi, ball (oddiy / ikki baravar / ballsiz) va 💡 izoh — u javobdan keyin o'quvchilarga ko'rinadi.</div>
+    <div class="step"><b>Sinab ko'ring va saqlang</b>"👁 Sinab ko'rish" — o'quvchi ko'zi bilan tekshirish. Keyin "💾 Saqlash".</div>
+  </div>
+  <div class="tip">⚡ Ko'p savolni tez qo'shish: "+ Savol qo'shish" oynasining pastida — Excel/CSV'dan, boshqa viktorinadan, matndan (Word yoki Telegram'dagi testni nusxalab qo'ying) yoki ✨ AI bilan (agar yoqilgan bo'lsa).</div>
+
+  <h2 id="uz-types">🧩 Savol turlari</h2>
+  <table>
+    <tr><th>Tur</th><th>Qachon ishlatiladi</th></tr>
+    <tr><td>🔘 Viktorina</td><td>4 ta variantdan bitta to'g'ri javob — eng ko'p ishlatiladigan tur.</td></tr>
+    <tr><td>⚖️ To'g'ri / Noto'g'ri</td><td>Tez tekshiruv, darsni boshlash uchun qulay.</td></tr>
+    <tr><td>☑️ Bir nechta javob</td><td>Bir nechta to'g'ri variant; hammasini topgan ball oladi.</td></tr>
+    <tr><td>⌨️ Javobni yozish</td><td>O'quvchi o'zi yozadi (atama, sana, ism). Bir necha yozilishni qabul qilish mumkin.</td></tr>
+    <tr><td>🔢 Tartiblash</td><td>Voqealar, raqamlar, bosqichlarni to'g'ri tartibga qo'yish.</td></tr>
+    <tr><td>🎚 Shkala</td><td>Son tanlash: yil, foiz, miqdor; "ruxsat etilgan farq" bilan.</td></tr>
+    <tr><td>📍 Rasmda belgilash</td><td>Xarita yoki sxemada to'g'ri joyni bosish.</td></tr>
+    <tr><td>📊 So'rovnoma</td><td>Fikr so'rash, to'g'ri javob yo'q.</td></tr>
+    <tr><td>☁️ So'zlar buluti</td><td>Hamma bitta so'z yozadi — ko'p yozilgani katta chiqadi.</td></tr>
+    <tr><td>💬 Ochiq javob</td><td>Erkin fikr, kartochkalarda ko'rsatiladi.</td></tr>
+    <tr><td>💡 Aqliy hujum</td><td>Hamma g'oya yozadi, keyin eng yaxshilariga ovoz beradi.</td></tr>
+    <tr><td>🖼 Slayd</td><td>Savolsiz ma'lumot sahifasi — mavzuni tushuntirish uchun.</td></tr>
+  </table>
+
+  <h2 id="uz-play">🎮 O'yin o'tkazish</h2>
+  <div class="steps">
+    <div class="step"><b>▶ O'ynash</b>Lobbi ochiladi: PIN, manzil va QR kod katta ekranda. Proyektor yoki televizorga chiqaring.</div>
+    <div class="step"><b>Sozlamalarni tanlang</b>Masalan: 👥 jamoalar, 🎯 aniqlik rejimi (tezlik hisobga olinmaydi), ⏳ o'qish vaqti, 🔢 tasodifiy N ta savol, 🎓 faqat sinf ro'yxatidagilar, 🔒 qulflash.</div>
+    <div class="step"><b>"Boshlash →"</b>Hamma kirgach boshlang. Har savoldan keyin natijalar va reyting chiqadi; oxirida podium.</div>
+  </div>
+  <div class="tip">⌨️ Klaviatura: <kbd>Probel</kbd> yoki <kbd>Enter</kbd> — keyingisi, <kbd>P</kbd> — pauza, <kbd>M</kbd> — ovoz, <kbd>F</kbd> — to'liq ekran. O'yinchini chiqarish uchun lobbida uning ismini bosing.</div>
+
+  <h2 id="uz-homework">📝 Vazifa va mashq</h2>
+  <div class="card"><b>📝 Vazifa (uyga)</b> — kartadagi "📝 Vazifa" tugmasi. Muddatni tanlaysiz, PIN/havola berasiz; har bir o'quvchi o'z vaqtida o'ynaydi. Natijalar: Hisobotlar → Vazifalar.</div>
+  <div class="card"><b>📖 Mashq havolasi</b> — kartadagi ⋯ menyusi. O'quvchilar kartochkalar va vaqt cheklovisiz test bilan mustaqil tayyorlanadi. ⚠️ Havolani olgan har kim to'g'ri javoblarni ko'radi — nazorat testlari uchun yoqmang.</div>
+  <div class="card"><b>🖨 Qog'oz test</b> — ⋯ menyusi: internetsiz dars uchun chop etiladigan variant(lar) va javoblar kaliti.</div>
+
+  <h2 id="uz-classes">🎓 Sinflar</h2>
+  <p>"Sinflar" bo'limida o'quvchilar ro'yxatini bir marta kiriting. Lobbida yoki vazifada shu sinfni tanlasangiz, faqat ro'yxatdagilar kira oladi, kim kelmagani ko'rinadi. "📈 Reyting" — sinfning barcha o'yinlari bo'yicha umumiy natija.</p>
+
+  <h2 id="uz-reports">📊 Hisobotlar</h2>
+  <p>Har bir o'yin va vazifadan keyin: savollar bo'yicha to'g'ri javoblar foizi, o'yinchilar reytingi, o'quvchilar fikri. Excel/CSV'ga yuklab olish va 🏅 sertifikat chop etish mumkin. Viktorina kartasidagi ⋯ → "📊 Statistika" — eng qiyin savollarni ko'rsatadi.</p>
+
+  <h2 id="uz-faq">❓ Ko'p beriladigan savollar</h2>
+  <details><summary>O'quvchilar kira olmayapti</summary>Telefonlar kompyuter bilan bir xil Wi-Fi'da ekanini tekshiring va lobbidagi manzilni aynan shunday yozing. Windows birinchi marta so'rasa, Python'ga tarmoqqa chiqishga ruxsat bering ("Allow access").</details>
+  <details><summary>Parolni unutdim</summary>Kirish sahifasida "Parolni unutdingizmi?" → login, tiklash kodi va yangi parol. Kod ham yo'qolsa — server egasi serverni to'xtatib, <code>python server.py reset-password LOGIN</code> buyrug'ini beradi.</details>
+  <details><summary>Internet yo'q, ishlaydimi?</summary>Ha. Sayt sizning kompyuteringizda ishlaydi, o'quvchilarga faqat bir xil Wi-Fi kerak. Internet faqat YouTube video, rasm qidirish va AI uchun kerak.</details>
+  <details><summary>O'quvchi o'yin o'rtasida chiqib ketdi</summary>Xuddi shu telefondan saytni qayta ochsa, o'yinga o'zi qaytadi. Boshqa telefondan esa yangi ism bilan kirishi mumkin.</details>
+  <details><summary>Ma'lumotlarim qayerda saqlanadi?</summary>Kompyuteringizdagi <code>data/</code> papkasida; har kuni avtomatik zaxira olinadi. Profil menyusi → "💾 Zaxira nusxani yuklab olish" bilan o'zingiz ham saqlab qo'ying.</details>
+  <details><summary>Hamkasbim bilan birga viktorina tuzmoqchiman</summary>Kartadagi ⋯ → "🤝 Hammualliflar" — uning loginini qo'shing. Yoki "👥 Guruhlar" orqali butun maktab bilan ulashing.</details>
+</section>
+
+<!-- ====================== РУССКИЙ ====================== -->
+<section data-lang="ru" hidden>
+  <h1>📘 Руководство для учителя</h1>
+  <p class="lead">От первой викторины до отчёта — за 10 минут.</p>
+  <nav class="toc"><a href="#ru-start">Начало</a><a href="#ru-create">Создание</a><a href="#ru-types">Типы вопросов</a><a href="#ru-play">Проведение игры</a><a href="#ru-homework">Задания и тренировка</a><a href="#ru-classes">Классы</a><a href="#ru-reports">Отчёты</a><a href="#ru-faq">Вопросы</a></nav>
+
+  <h2 id="ru-start">🚀 Начало</h2>
+  <div class="steps">
+    <div class="step"><b>Зарегистрируйтесь</b>На странице «Login» выберите «Регистрация». Запишите <b>код восстановления</b> — он понадобится, если забудете пароль.</div>
+    <div class="step"><b>Посмотрите пример</b>В аккаунте уже есть викторина «Umumiy bilim» со всеми типами вопросов. Попробуйте её кнопкой ▶ Играть.</div>
+    <div class="step"><b>Подключите игроков</b>Ученики открывают на телефоне адрес из лобби или QR-код, вводят PIN и имя. Телефоны должны быть в той же сети Wi-Fi, что и компьютер.</div>
+  </div>
+
+  <h2 id="ru-create">✏️ Создание викторины</h2>
+  <div class="steps">
+    <div class="step"><b>Нажмите «+ Создать»</b>Введите название и, по желанию, описание и обложку.</div>
+    <div class="step"><b>Добавьте вопросы</b>«+ Добавить вопрос» → выберите тип. Напишите вопрос, ответы и отметьте верный ✔.</div>
+    <div class="step"><b>Настройте</b>Справа: время, очки (обычные / двойные / без очков) и 💡 пояснение — его ученики увидят после ответа.</div>
+    <div class="step"><b>Проверьте и сохраните</b>«👁 Попробовать» — посмотреть глазами ученика. Затем «💾 Сохранить».</div>
+  </div>
+  <div class="tip">⚡ Много вопросов сразу: внизу окна «+ Добавить вопрос» — из Excel/CSV, из другой викторины, из текста (вставьте тест из Word или Telegram) или ✨ с ИИ (если включён).</div>
+
+  <h2 id="ru-types">🧩 Типы вопросов</h2>
+  <table>
+    <tr><th>Тип</th><th>Когда использовать</th></tr>
+    <tr><td>🔘 Викторина</td><td>Один верный ответ из 4 — самый частый тип.</td></tr>
+    <tr><td>⚖️ Верно / Неверно</td><td>Быстрая проверка, удобно в начале урока.</td></tr>
+    <tr><td>☑️ Несколько ответов</td><td>Несколько верных вариантов; очки за все найденные.</td></tr>
+    <tr><td>⌨️ Ввод ответа</td><td>Ученик пишет сам (термин, дата, имя). Можно принять несколько написаний.</td></tr>
+    <tr><td>🔢 Порядок</td><td>Расставить события, числа, этапы по порядку.</td></tr>
+    <tr><td>🎚 Шкала</td><td>Выбор числа: год, процент, количество; с допуском.</td></tr>
+    <tr><td>📍 Точка на картинке</td><td>Нажать нужное место на карте или схеме.</td></tr>
+    <tr><td>📊 Опрос</td><td>Узнать мнение, верного ответа нет.</td></tr>
+    <tr><td>☁️ Облако слов</td><td>Все пишут по слову — частые слова крупнее.</td></tr>
+    <tr><td>💬 Открытый ответ</td><td>Свободное мнение, показывается карточками.</td></tr>
+    <tr><td>💡 Мозговой штурм</td><td>Все пишут идеи, затем голосуют за лучшие.</td></tr>
+    <tr><td>🖼 Слайд</td><td>Страница с информацией без вопроса — для объяснения темы.</td></tr>
+  </table>
+
+  <h2 id="ru-play">🎮 Проведение игры</h2>
+  <div class="steps">
+    <div class="step"><b>▶ Играть</b>Откроется лобби: PIN, адрес и QR-код на большом экране. Выведите его на проектор или телевизор.</div>
+    <div class="step"><b>Выберите настройки</b>Например: 👥 команды, 🎯 режим точности (скорость не учитывается), ⏳ время на чтение, 🔢 N случайных вопросов, 🎓 только ученики из списка, 🔒 закрыть вход.</div>
+    <div class="step"><b>«Начать →»</b>Начинайте, когда все вошли. После каждого вопроса — результаты и рейтинг, в конце — пьедестал.</div>
+  </div>
+  <div class="tip">⌨️ Клавиши: <kbd>Пробел</kbd> или <kbd>Enter</kbd> — далее, <kbd>P</kbd> — пауза, <kbd>M</kbd> — звук, <kbd>F</kbd> — полный экран. Чтобы удалить игрока, нажмите его имя в лобби.</div>
+
+  <h2 id="ru-homework">📝 Задания и тренировка</h2>
+  <div class="card"><b>📝 Задание (домашнее)</b> — кнопка «📝 Задание» на карточке. Выбираете срок и даёте PIN/ссылку; каждый проходит в своё время. Результаты: Отчёты → Задания.</div>
+  <div class="card"><b>📖 Ссылка для тренировки</b> — меню ⋯ на карточке. Ученики готовятся сами: карточки и тест без таймера. ⚠️ Любой со ссылкой увидит верные ответы — не включайте для контрольных.</div>
+  <div class="card"><b>🖨 Бумажный тест</b> — меню ⋯: печатные варианты для урока без интернета и ключ ответов.</div>
+
+  <h2 id="ru-classes">🎓 Классы</h2>
+  <p>В разделе «Классы» один раз введите список учеников. Если выбрать класс в лобби или в задании, войти смогут только ученики из списка, и будет видно, кто не пришёл. «📈 Рейтинг» — итог класса по всем играм.</p>
+
+  <h2 id="ru-reports">📊 Отчёты</h2>
+  <p>После каждой игры и задания: процент верных ответов по вопросам, рейтинг игроков, мнение учеников. Можно скачать в Excel/CSV и распечатать 🏅 сертификаты. На карточке викторины ⋯ → «📊 Статистика» покажет самые трудные вопросы.</p>
+
+  <h2 id="ru-faq">❓ Частые вопросы</h2>
+  <details><summary>Ученики не могут войти</summary>Проверьте, что телефоны в той же сети Wi-Fi, что и компьютер, и адрес набран точно как в лобби. Если Windows спросит в первый раз — разрешите Python доступ к сети («Allow access»).</details>
+  <details><summary>Забыл пароль</summary>На странице входа «Забыли пароль?» → логин, код восстановления и новый пароль. Если потерян и код — владелец сервера останавливает сервер и выполняет <code>python server.py reset-password LOGIN</code>.</details>
+  <details><summary>Нет интернета — будет работать?</summary>Да. Сайт работает на вашем компьютере, ученикам нужна только общая сеть Wi-Fi. Интернет нужен лишь для видео YouTube, поиска картинок и ИИ.</details>
+  <details><summary>Ученик вышел посреди игры</summary>Если снова открыть сайт с того же телефона, он вернётся в игру сам. С другого телефона можно войти под новым именем.</details>
+  <details><summary>Где хранятся мои данные?</summary>В папке <code>data/</code> на вашем компьютере; резервная копия делается каждый день. Сохраните копию и себе: меню профиля → «💾 Скачать резервную копию».</details>
+  <details><summary>Хочу составлять викторину вместе с коллегой</summary>На карточке ⋯ → «🤝 Соавторы» — добавьте его логин. Или делитесь со всей школой через «👥 Группы».</details>
+</section>
+
+<!-- ====================== ENGLISH ====================== -->
+<section data-lang="en" hidden>
+  <h1>📘 Teacher's guide</h1>
+  <p class="lead">From your first quiz to the report — in 10 minutes.</p>
+  <nav class="toc"><a href="#en-start">Getting started</a><a href="#en-create">Creating</a><a href="#en-types">Question types</a><a href="#en-play">Running a game</a><a href="#en-homework">Homework & practice</a><a href="#en-classes">Classes</a><a href="#en-reports">Reports</a><a href="#en-faq">FAQ</a></nav>
+
+  <h2 id="en-start">🚀 Getting started</h2>
+  <div class="steps">
+    <div class="step"><b>Sign up</b>On the "Login" page choose "Sign up". Write down the <b>recovery code</b> — you'll need it if you forget your password.</div>
+    <div class="step"><b>Look at the sample</b>Your account has a sample quiz, "Umumiy bilim", with every question type. Try it with ▶ Play.</div>
+    <div class="step"><b>Connect players</b>Students open the address or QR code from the lobby on their phones and type the PIN and their name. Phones must be on the same Wi-Fi as the computer.</div>
+  </div>
+
+  <h2 id="en-create">✏️ Creating a quiz</h2>
+  <div class="steps">
+    <div class="step"><b>Press "+ Create"</b>Enter a title and, if you like, a description and cover picture.</div>
+    <div class="step"><b>Add questions</b>"+ Add question" → pick a type. Write the question and answers, and tick the right one ✔.</div>
+    <div class="step"><b>Set it up</b>On the right: time limit, points (normal / double / none) and a 💡 explanation that students see after answering.</div>
+    <div class="step"><b>Try it and save</b>"👁 Try it" shows it as a student sees it. Then "💾 Save".</div>
+  </div>
+  <div class="tip">⚡ Adding many questions fast: at the bottom of the "+ Add question" window — from Excel/CSV, from another quiz, from text (paste a test from Word or Telegram) or ✨ with AI (when switched on).</div>
+
+  <h2 id="en-types">🧩 Question types</h2>
+  <table>
+    <tr><th>Type</th><th>When to use it</th></tr>
+    <tr><td>🔘 Quiz</td><td>One right answer out of 4 — the most common type.</td></tr>
+    <tr><td>⚖️ True / False</td><td>A quick check, handy to start a lesson.</td></tr>
+    <tr><td>☑️ Multiple answers</td><td>Several right options; points for finding them all.</td></tr>
+    <tr><td>⌨️ Type answer</td><td>Students type it (a term, date, name). Several spellings can be accepted.</td></tr>
+    <tr><td>🔢 Puzzle</td><td>Put events, numbers or steps in order.</td></tr>
+    <tr><td>🎚 Slider</td><td>Pick a number: a year, percent, amount; with an allowed difference.</td></tr>
+    <tr><td>📍 Pin answer</td><td>Tap the right spot on a map or diagram.</td></tr>
+    <tr><td>📊 Poll</td><td>Ask for opinions; no right answer.</td></tr>
+    <tr><td>☁️ Word cloud</td><td>Everyone types a word — common words show bigger.</td></tr>
+    <tr><td>💬 Open-ended</td><td>Free answers shown as cards.</td></tr>
+    <tr><td>💡 Brainstorm</td><td>Everyone writes ideas, then votes for the best.</td></tr>
+    <tr><td>🖼 Slide</td><td>An info page with no question — to explain a topic.</td></tr>
+  </table>
+
+  <h2 id="en-play">🎮 Running a game</h2>
+  <div class="steps">
+    <div class="step"><b>▶ Play</b>The lobby opens: PIN, address and QR code on the big screen. Show it on a projector or TV.</div>
+    <div class="step"><b>Choose settings</b>For example: 👥 teams, 🎯 accuracy mode (speed doesn't count), ⏳ reading time, 🔢 N random questions, 🎓 class list only, 🔒 lock the game.</div>
+    <div class="step"><b>"Start →"</b>Start when everyone is in. Each question is followed by results and a leaderboard; a podium at the end.</div>
+  </div>
+  <div class="tip">⌨️ Keys: <kbd>Space</kbd> or <kbd>Enter</kbd> — next, <kbd>P</kbd> — pause, <kbd>M</kbd> — sound, <kbd>F</kbd> — full screen. To remove a player, click their name in the lobby.</div>
+
+  <h2 id="en-homework">📝 Homework & practice</h2>
+  <div class="card"><b>📝 Assignment (homework)</b> — the "📝 Assign" button on a card. Choose a deadline and share the PIN/link; everyone plays in their own time. Results: Reports → Assignments.</div>
+  <div class="card"><b>📖 Practice link</b> — the ⋯ menu on a card. Students practise on their own with flashcards and an untimed test. ⚠️ Anyone with the link can see the right answers — don't use it for real tests.</div>
+  <div class="card"><b>🖨 Paper test</b> — the ⋯ menu: printable versions for a lesson without internet, with an answer key.</div>
+
+  <h2 id="en-classes">🎓 Classes</h2>
+  <p>Enter your student list once under "Classes". Pick the class in the lobby or for an assignment and only listed students can join — you'll also see who is missing. "📈 Ranking" totals the class across all games.</p>
+
+  <h2 id="en-reports">📊 Reports</h2>
+  <p>After every game and assignment: percent correct per question, a player ranking and students' feedback. Download to Excel/CSV or print 🏅 certificates. On a quiz card, ⋯ → "📊 Statistics" shows the hardest questions.</p>
+
+  <h2 id="en-faq">❓ FAQ</h2>
+  <details><summary>Students can't join</summary>Check that the phones are on the same Wi-Fi as the computer and that the address is typed exactly as in the lobby. If Windows asks the first time, allow Python network access ("Allow access").</details>
+  <details><summary>I forgot my password</summary>On the sign-in page: "Forgot your password?" → username, recovery code and a new password. If the code is lost too, the server owner stops the server and runs <code>python server.py reset-password LOGIN</code>.</details>
+  <details><summary>Does it work without internet?</summary>Yes. The site runs on your computer; students only need the same Wi-Fi. Internet is needed only for YouTube videos, picture search and AI.</details>
+  <details><summary>A student left in the middle of a game</summary>Opening the site again on the same phone brings them back into the game. From another phone they can join with a new name.</details>
+  <details><summary>Where is my data kept?</summary>In the <code>data/</code> folder on your computer, with a daily automatic backup. Keep your own copy too: profile menu → "💾 Download a backup".</details>
+  <details><summary>I want to write a quiz with a colleague</summary>On the card, ⋯ → "🤝 Co-authors" and add their username. Or share with the whole school through "👥 Groups".</details>
+</section>
+</main>
+<script src="legal.js"></script>
+</body>
+</html>

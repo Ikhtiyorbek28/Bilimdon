@@ -1,0 +1,939 @@
+<!doctype html>
+<html lang="uz">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
+<title>Bilimdon</title>
+<!-- the web font loads in the background: without internet (school Wi-Fi only) the page opens at once with a system font -->
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@600;800;900&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
+<link rel="stylesheet" href="style.css">
+<!-- three.js for the 3D avatars (avatar3d.js); without internet the SVG avatars are used instead -->
+<script type="importmap">
+{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"}}
+</script>
+<style>
+  /* the 3D avatar picker */
+  .av3-stage{position:relative;height:270px;border-radius:16px;overflow:hidden;margin:0 0 8px;background:radial-gradient(60% 55% at 50% 45%,rgba(255,122,26,.25),transparent 70%),#120f0d}
+  .av3-stage canvas{display:block;width:100%;height:100%;cursor:grab;touch-action:none}
+  .av3-acts{position:absolute;left:0;right:0;bottom:8px;display:flex;justify-content:center;gap:6px;z-index:1}
+  .av3-acts button{font-size:18px;width:38px;height:38px;border-radius:50%;border:1px solid rgba(255,122,26,.4);background:rgba(24,20,17,.75);cursor:pointer;padding:0}
+  .av3-who{text-align:center;margin-bottom:8px}
+  .av3-who b{font-size:20px;color:var(--c2);display:block}
+  .av3-who small{font-weight:800;color:#a89a8e}
+  .av3-tabs{display:grid;grid-template-columns:repeat(3,1fr);gap:4px;background:#120f0d;border-radius:12px;padding:4px;margin-bottom:8px}
+  .av3-tabs button{font:800 14px Nunito,sans-serif;border:0;border-radius:9px;padding:8px 4px;background:none;color:#a89a8e;cursor:pointer}
+  .av3-tabs button.on{background:linear-gradient(180deg,var(--c2),var(--c));color:#1a0e04}
+  .av3-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;max-height:228px;overflow:auto;margin-bottom:12px;padding:2px}
+  .av3-grid.colors{grid-template-columns:repeat(6,1fr)}
+  .av3-grid button{position:relative;aspect-ratio:1;border:2px solid transparent;border-radius:12px;background:#1f1a16;cursor:pointer;padding:0;display:flex;align-items:center;justify-content:center}
+  .av3-grid button.on{border-color:var(--c);background:rgba(255,122,26,.18)}
+  .av3-grid img{width:86%;height:86%;object-fit:contain;margin-top:-14%}
+  .av3-grid img:not([src]){visibility:hidden}
+  .av3-grid span{position:absolute;bottom:3px;left:2px;right:2px;font:800 10.5px Nunito,sans-serif;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:#a89a8e;text-align:center}
+  .av3-grid i{width:58%;height:58%;border-radius:50%;margin-top:-14%;box-shadow:inset 0 -6px 10px rgba(0,0,0,.3),inset 0 5px 8px rgba(255,255,255,.35)}
+  .av3-grid.colors i{margin-top:0}
+  .av3-grid.colors span{display:none}
+  #wait-av .av3i{display:block;margin:0 auto}
+</style>
+<style>
+  .pbar{position:fixed;top:0;left:0;right:0;display:flex;justify-content:space-between;align-items:center;gap:8px;padding:10px 16px;background:rgba(0,0,0,.25);font-weight:900;z-index:5}
+  .pbar .team{border-radius:999px;padding:2px 10px;font-size:13px}
+  .pbtns{display:grid;grid-template-columns:1fr 1fr;gap:12px;width:100%;max-width:600px;height:min(62vh,520px)}
+  .pbtns.n2{grid-template-columns:1fr}
+  .pbtns.free{height:auto;display:block}
+  .pbtn{border:0;border-radius:14px;color:#fff;font:900 22px Nunito,sans-serif;cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;padding:10px;box-shadow:0 6px 0 rgba(0,0,0,.3);word-break:break-word;position:relative}
+  .pbtn:active{transform:translateY(4px);box-shadow:0 2px 0 rgba(0,0,0,.3)}
+  .pbtn b{font-size:44px}
+  .pbtn.sel{outline:6px solid #fff;outline-offset:-10px}
+  .pbtn.haspic{gap:4px;padding:8px}
+  .pbtn.haspic b{font-size:24px;position:absolute;top:8px;left:12px}
+  .pbtn img{max-width:100%;max-height:70%;min-height:0;object-fit:contain;border-radius:8px;background:rgba(255,255,255,.9);flex:1}
+  .pbtn .mark{position:absolute;top:10px;right:12px;background:#fff;color:var(--ink);border-radius:50%;width:34px;height:34px;display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:900}
+  #play{padding-top:56px}
+  .avgrid{display:grid;grid-template-columns:repeat(8,1fr);gap:4px;margin-bottom:12px}
+  .avgrid:empty{display:none}
+  .avgrid button{font-size:24px;border:2px solid transparent;background:#eceff1;border-radius:8px;padding:4px 0;cursor:pointer;line-height:1.2}
+  .avgrid button.on{border-color:var(--b);background:#d6ecf5}
+  .ptext{background:#fff;color:var(--ink);font-weight:900;font-size:18px;padding:10px 14px;border-radius:10px;margin-bottom:10px;text-align:center;max-width:600px;width:100%}
+  .pbody{background:#fff;color:var(--ink);font-weight:700;font-size:18px;padding:16px;border-radius:10px;white-space:pre-wrap;line-height:1.4}
+  .pvideo{width:100%;max-width:600px;aspect-ratio:16/9;border-radius:10px;overflow:hidden;margin-bottom:10px;background:#000}
+  .pvideo:empty{display:none}
+  .pvideo iframe{width:100%;height:100%;border:0}
+  .ptimer{background:var(--d);border-radius:999px;padding:4px 14px;font-weight:900;font-size:18px}
+  .ptimer:empty{display:none}
+  .pact{display:flex;gap:10px;width:100%;max-width:600px;margin-top:12px}
+  .pact:empty{display:none}
+  .pact .btn{margin:0}
+  .typein{width:100%;font-size:26px;text-align:center;padding:18px;margin:0 0 12px}
+  .neutral-bg{background:var(--b)!important}
+  .login-link{position:fixed;top:14px;right:16px;z-index:6;background:#fff;color:var(--ink);text-decoration:none;font-weight:900;padding:9px 16px;border-radius:999px;box-shadow:0 3px 0 rgba(0,0,0,.3);font-size:16px}
+  .login-link:hover{background:var(--c)}
+  .langsel{position:fixed;top:14px;left:16px;z-index:6;width:auto;margin:0;padding:8px 10px;border-radius:999px;border:0;font:800 15px Nunito,sans-serif;box-shadow:0 3px 0 rgba(0,0,0,.3);cursor:pointer}
+  .slbox{background:#fff;color:var(--ink);border-radius:14px;padding:20px 18px;text-align:center}
+  .slval{font-size:48px;font-weight:900;color:var(--bg2)}
+  .slval small{font-size:20px;color:var(--muted)}
+  .slbox input[type=range]{width:100%;margin:14px 0 4px;accent-color:var(--bg2);height:30px}
+  .sllbl{display:flex;justify-content:space-between;font-weight:800;color:var(--muted)}
+  .slnudge{display:flex;gap:10px;margin-top:12px}
+  .slnudge .btn{margin:0;font-size:26px;padding:6px;color:var(--ink);border-color:#cfd8dc}
+  .pinbox{position:relative;line-height:0;border-radius:12px;overflow:hidden;cursor:crosshair;max-height:58vh}
+  .pinbox img{width:100%;user-select:none;-webkit-user-select:none}
+  .pinmark{position:absolute;width:26px;height:26px;transform:translate(-50%,-50%);border-radius:50%;background:var(--c);border:4px solid #fff;box-shadow:0 2px 8px rgba(0,0,0,.5);pointer-events:none}
+  .pinmark[hidden]{display:none}
+  #play.play-paused{position:relative}
+  #play.play-paused::after{content:attr(data-pause);position:fixed;inset:0;background:rgba(15,30,35,.82);display:flex;align-items:center;justify-content:center;text-align:center;padding:24px;font-size:28px;font-weight:900;z-index:8}
+  .ideas-pick{display:flex;flex-direction:column;gap:8px;width:100%;max-width:520px;max-height:52vh;overflow:auto}
+  .ideas-pick button{text-align:left;font:800 17px/1.3 inherit;font-family:inherit;padding:12px 14px;border-radius:12px;border:3px solid transparent;background:rgba(255,255,255,.92);color:var(--ink);cursor:pointer;overflow-wrap:anywhere}
+  .ideas-pick button.on{border-color:#26890c;background:#e4f7dd}
+  .ideas-pick button.on::after{content:' 👍'}
+  .join-game{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:12px}
+  .join-game .linkbtn{margin:0;flex-shrink:0}
+  .join-game b{font-size:17px;text-align:right;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--c2)}
+  .join-note{font-weight:800;text-align:center;margin:-4px 0 12px;font-size:15px;color:#e2d6cb}
+  .jstep{animation:stepin .3s both}
+  .av-stage{display:flex;flex-direction:column;align-items:center;margin:2px 0 10px;min-height:160px;
+    background:radial-gradient(60% 55% at 50% 60%,rgba(255,122,26,.22),transparent 70%)}
+  .av-stage b{font-size:20px;color:var(--c2);margin-top:2px}
+  .av-stage small{font-weight:800;color:#a89a8e;min-height:1.2em}
+  #join .avgrid{grid-template-columns:repeat(6,1fr);gap:6px}
+  #join .avgrid button{padding:4px 0 0;line-height:0;border-radius:12px}
+  @keyframes stepin{from{opacity:0;transform:translateX(24px)}}
+  #join .box .btn:not(.ghost):not(.alt){background:linear-gradient(180deg,var(--c2),var(--c));color:#1a0e04;box-shadow:0 4px 0 #a8460b,0 0 22px rgba(255,122,26,.35)}
+  /* join card: dark glass with a glowing orange edge, like the rest of the game */
+  #join .box,.intro-card{background:rgba(24,20,17,.92);color:#f1ebe5;border:1px solid rgba(255,122,26,.4);box-shadow:0 0 44px rgba(255,122,26,.16)}
+  #join .box input{background:#120f0d;color:#fff;border-color:#3a3029}
+  #join .box input::placeholder{color:#8f8379}
+  #join .box input:focus{border-color:var(--c);box-shadow:0 0 0 3px rgba(255,122,26,.2)}
+  #join .avgrid button{background:#1f1a16}
+  #join .avgrid button.on{border-color:var(--c);background:rgba(255,122,26,.18)}
+  #join .linkbtn,.intro-card .linkbtn{color:var(--c2)}
+  #join p[data-t="avatar"]{color:#a89a8e!important}
+  .legal-links{margin-top:18px;font-size:13px;font-weight:700;opacity:.75;text-align:center}
+  .legal-links a{color:#fff}
+  .review{background:#fff;color:var(--ink);border-radius:14px;max-width:420px;width:100%;margin-top:16px;text-align:left}
+  .review summary{cursor:pointer;font-weight:900;padding:12px 16px;list-style:none;text-align:center}
+  .review summary::-webkit-details-marker{display:none}
+  .review summary::after{content:' ▾'}
+  .review[open] summary::after{content:' ▴'}
+  #review-list{max-height:45vh;overflow:auto;padding:0 12px 12px}
+  .rv{display:flex;flex-direction:column;gap:2px;border-left:5px solid #b9c3cc;background:#f3f6f8;border-radius:8px;padding:8px 10px;margin-top:8px;font-size:14px;position:relative}
+  .rv.ok{border-color:#26890c}.rv.bad{border-color:#e21b3c}
+  .rv b{overflow-wrap:anywhere}.rv span{overflow-wrap:anywhere;color:#40525f}
+  .rv .rv-ex{font-style:italic;color:#5b4a12;background:#fff6d6;border-radius:6px;padding:4px 8px;margin-top:4px}
+  .explain{margin-top:10px;padding:10px 12px;border-radius:10px;background:rgba(255,246,214,.95);color:#5b4a12;font-weight:700;font-size:16px;text-align:left;line-height:1.35}
+  .rv .pts{position:absolute;right:10px;bottom:8px;font-weight:900;color:#26890c}
+  .emotes{position:fixed;left:0;right:0;bottom:0;display:flex;justify-content:center;gap:6px;padding:8px 8px calc(8px + env(safe-area-inset-bottom));background:rgba(0,0,0,.25);z-index:20}
+  .emotes button{font-size:26px;width:46px;height:46px;border:0;border-radius:50%;background:rgba(255,255,255,.9);cursor:pointer;transition:transform .15s}
+  .emotes button:disabled{opacity:.5}
+  .emotes button.sent{transform:scale(1.3)}
+  body.has-emotes{padding-bottom:70px}
+  .fbform{background:#fff;color:var(--ink);border-radius:14px;padding:16px 18px;max-width:420px;width:100%;margin-top:18px;text-align:center}
+  .fbform p{font-weight:900;margin:10px 0 6px}
+  .stars{display:flex;justify-content:center;gap:4px}
+  .stars button{border:0;background:none;font-size:34px;cursor:pointer;color:#cfd8dc;line-height:1}
+  .stars button.on{color:var(--c)}
+  .yn{display:flex;gap:8px;justify-content:center}
+  .yn button{flex:1;border:2px solid #e1e7ea;background:#f7f9fa;border-radius:10px;padding:8px;font:800 17px Nunito,sans-serif;cursor:pointer;color:var(--ink)}
+  .yn button.on{border-color:var(--b);background:#d6ecf5}
+  .fbform .btn{margin-top:14px}
+  .intro-card{background:#fff;color:var(--ink);border-radius:14px;padding:22px;max-width:480px;width:100%;text-align:center}
+  .intro-card h2{font-size:28px;font-weight:900;margin-bottom:8px}
+  .intro-card p{color:var(--muted);font-weight:700;margin-bottom:6px}
+  .linkbtn{background:none;border:0;color:var(--b);font:800 15px Nunito,sans-serif;cursor:pointer;display:block;margin:12px auto 0}
+  /* practice mode */
+  .modes{display:grid;gap:12px;margin-top:16px}
+  .mode{border:2px solid #e1e7ea;border-radius:14px;padding:16px;background:#fff;cursor:pointer;text-align:left;font-family:inherit;color:var(--ink)}
+  .mode:hover{border-color:var(--b);background:#f2f9fc}
+  .mode b{display:block;font-size:20px}
+  .mode small{color:var(--muted);font-weight:700}
+  .flash{width:100%;max-width:520px;min-height:300px;perspective:1200px;cursor:pointer;margin:10px 0}
+  .flash-in{position:relative;width:100%;min-height:300px;transition:transform .5s;transform-style:preserve-3d}
+  .flash.flipped .flash-in{transform:rotateY(180deg)}
+  .face{position:absolute;inset:0;backface-visibility:hidden;-webkit-backface-visibility:hidden;border-radius:18px;padding:22px;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:12px;font-weight:900;font-size:22px;box-shadow:0 8px 20px rgba(0,0,0,.25);overflow:auto}
+  .face.front{background:#fff;color:var(--ink)}
+  .face.back{background:var(--ok);color:#fff;transform:rotateY(180deg)}
+  .face img{max-width:100%;max-height:150px;border-radius:10px;object-fit:contain}
+  .face small{font-size:14px;opacity:.7;font-weight:800}
+  .fpin{position:relative;line-height:0;max-width:100%}
+  .fpin img{max-height:180px}
+  .fpin i{position:absolute;transform:translate(-50%,-50%);border-radius:50%;background:rgba(255,255,255,.35);border:3px solid #fff}
+  .fprog{font-weight:900;opacity:.9}
+  .sol-box{background:rgba(0,0,0,.2);border-radius:12px;padding:12px 16px;margin-top:16px;font-weight:800;font-size:18px;text-align:center;max-width:520px}
+  .sol-box img{max-height:120px;border-radius:8px;background:#fff}
+</style>
+</head>
+<body>
+<canvas id="confetti"></canvas>
+<div class="pbar" id="pbar" style="display:none"><span id="pb-name"></span><span class="ptimer" id="ptimer"></span><span id="pb-score"></span></div>
+
+<section class="screen active" id="join">
+  <select class="langsel" id="langsel" aria-label="Language" onchange="setLang(this.value)"></select>
+  <a class="login-link" href="/host" data-ttitle="loginTitle">🔑 Login</a>
+  <h1 class="logo">Bilim<span>don</span></h1>
+  <div class="box">
+    <!-- step 1: only the game PIN -->
+    <div id="step-pin">
+      <input id="pin-in" inputmode="numeric" maxlength="7" data-tph="pinPh" style="text-align:center;font-size:26px;letter-spacing:2px" onkeydown="if(event.key==='Enter')checkPin()">
+      <button class="btn" id="pin-btn" onclick="checkPin()" data-t="next"></button>
+    </div>
+    <!-- step 2: the name, once the PIN is known to be right -->
+    <div id="step-name" class="jstep" hidden>
+      <div class="join-game"><button type="button" class="linkbtn" onclick="backToPin()" data-t="changePin"></button><b class="join-title"></b></div>
+      <input id="name-in" maxlength="16" data-tph="namePh" style="text-align:center;font-size:22px" onkeydown="if(event.key==='Enter')toAvatar()">
+      <p class="join-note" id="roster-note" hidden data-t="rosterHint"></p>
+      <button class="btn" onclick="toAvatar()" data-t="next"></button>
+    </div>
+    <!-- step 3: the avatar character -->
+    <div id="step-avatar" class="jstep" hidden>
+      <div class="join-game"><button type="button" class="linkbtn" id="av-back" onclick="avatarBack()"></button><b class="join-title"></b></div>
+      <p class="join-note" id="nick-note" hidden data-t="nickAuto"></p>
+      <!-- 3D picker (avatar3d.js) -->
+      <div id="av3" hidden>
+        <div class="av3-stage" id="av3-stage">
+          <div class="av3-acts">
+            <button type="button" data-act="wave">👋</button><button type="button" data-act="jump">⤴️</button>
+            <button type="button" data-act="dance">💃</button><button type="button" data-act="spin">🔄</button>
+            <button type="button" onclick="av3Random()">🎲</button>
+          </div>
+        </div>
+        <div class="av3-who"><b id="av3-name"></b><small id="av3-player"></small></div>
+        <div class="av3-tabs">
+          <button type="button" class="on" data-tab="char" data-t="avChar"></button><button type="button" data-tab="acc" data-t="avAcc"></button><button type="button" data-tab="color" data-t="avColor"></button>
+        </div>
+        <div class="av3-grid" id="av3-grid"></div>
+      </div>
+      <!-- the SVG picker: used when the 3D one cannot load (no internet) -->
+      <div id="av-old" hidden>
+        <div class="av-stage"><div id="av-big"></div><b id="av-name"></b><small id="av-player"></small></div>
+        <div class="avgrid" id="avatars"></div>
+      </div>
+      <button class="btn" id="join-btn" onclick="join()" data-t="enter"></button>
+    </div>
+    <p class="err" id="join-err" style="margin-top:10px"></p>
+    <button class="linkbtn" id="study-link" onclick="askStudy()" data-t="studyLink"></button>
+  </div>
+  <p class="legal-links"><a href="/privacy" data-t="privacy"></a> · <a href="/terms" data-t="terms"></a></p>
+</section>
+
+<section class="screen" id="intro">
+  <div class="intro-card">
+    <div style="font-size:44px">📝</div>
+    <h2 id="in-title"></h2>
+    <p id="in-desc"></p>
+    <p id="in-meta"></p>
+    <button class="btn alt" style="margin-top:14px" onclick="chNext()" data-t="start"></button>
+  </div>
+</section>
+
+<!-- practice mode: choose flashcards or self-test -->
+<section class="screen" id="study">
+  <div class="intro-card">
+    <div style="font-size:44px">📖</div>
+    <p style="font-weight:900;color:var(--bg2)" data-t="studyTitle"></p>
+    <h2 id="st-title"></h2>
+    <p id="st-desc"></p>
+    <p id="st-meta"></p>
+    <div class="modes">
+      <button class="mode" onclick="startCards()"><b data-t="cards"></b><small data-t="cardsSub"></small></button>
+      <button class="mode" onclick="startTest()"><b data-t="test"></b><small data-t="testSub"></small></button>
+    </div>
+    <button class="linkbtn" onclick="leave()" data-t="back"></button>
+  </div>
+</section>
+
+<section class="screen" id="cards">
+  <p class="fprog" id="fc-prog"></p>
+  <div class="flash" id="flash" onclick="this.classList.toggle('flipped')">
+    <div class="flash-in"><div class="face front" id="fc-front"></div><div class="face back" id="fc-back"></div></div>
+  </div>
+  <div class="pact" style="max-width:520px">
+    <button class="btn ghost" style="flex:1" onclick="cardAnswer(false)" data-t="again"></button>
+    <button class="btn alt" style="flex:1" onclick="cardAnswer(true)" data-t="know"></button>
+  </div>
+  <button class="linkbtn" style="color:#fff;opacity:.8" onclick="studyHome()" data-t="back"></button>
+</section>
+
+<section class="screen" id="wait">
+  <div class="fb" id="wait-title"></div>
+  <div id="wait-av" hidden></div>
+  <div class="spin"></div>
+  <p id="wait-sub" style="font-size:20px;font-weight:800;text-align:center;opacity:.9"></p>
+</section>
+
+<section class="screen" id="play">
+  <p id="play-q" style="font-weight:900;font-size:18px;margin-bottom:10px;text-align:center"></p>
+  <div class="ptext" id="play-text" hidden></div>
+  <button class="linkbtn" id="speak-btn" hidden onclick="speakQuestion()" style="color:#fff;margin:0 auto 8px" data-t="readAloud"></button>
+  <div class="pvideo" id="play-video"></div>
+  <img id="play-img" alt="" hidden style="max-height:22vh;max-width:100%;border-radius:10px;margin-bottom:10px;object-fit:contain">
+  <div class="pbtns" id="pbtns"></div>
+  <div class="pact" id="pact"></div>
+</section>
+
+<section class="screen" id="fb-screen">
+  <div class="fb" id="fb-text"></div>
+  <p id="fb-rank" style="font-size:22px;font-weight:800;margin-top:24px;background:rgba(0,0,0,.2);padding:10px 18px;border-radius:10px;text-align:center"></p>
+  <div class="sol-box" id="fb-sol" hidden></div>
+  <button class="btn" id="fb-next" style="max-width:320px;margin-top:20px;display:none" onclick="nextStep()"></button>
+</section>
+
+<section class="screen" id="final">
+  <div class="fb" id="final-text"></div>
+  <div class="fbform" id="fbform" hidden>
+    <p data-t="like"></p>
+    <div class="stars" id="fb-stars"></div>
+    <p data-t="learned"></p>
+    <div class="yn" data-k="learned"><button data-v="1" data-t="yes"></button><button data-v="0" data-t="no"></button></div>
+    <p data-t="recommend"></p>
+    <div class="yn" data-k="recommend"><button data-v="1" data-t="yes"></button><button data-v="0" data-t="no"></button></div>
+    <p data-t="mood"></p>
+    <div class="yn" data-k="mood"><button data-v="pos">😀</button><button data-v="neu">😐</button><button data-v="neg">🙁</button></div>
+    <button class="btn alt" id="fb-send" disabled onclick="sendFeedback()" data-t="send"></button>
+  </div>
+  <p id="fb-thanks" hidden style="font-weight:900;font-size:20px;margin-top:16px" data-t="thanks"></p>
+  <details class="review" id="review" hidden><summary data-t="myAnswers"></summary><div id="review-list"></div></details>
+  <div id="final-acts" style="max-width:320px;width:100%;margin-top:20px"></div>
+</section>
+
+<div class="emotes" id="emotes" hidden></div>
+
+<script src="common.js"></script>
+<script src="avatars.js"></script>
+<script src="i18n.js"></script>
+<script>
+let me = recall('bilimdon_player'), stop = null, lastKey = '';
+const NEUTRAL = ['poll', 'wordcloud', 'open', 'brainstorm'];
+
+/* ---------- language ---------- */
+$('langsel').innerHTML = Object.entries(LANGS).map(([k, v]) => `<option value="${k}">${v}</option>`).join('');
+function setLang(l) {
+  LANG = l; store('bilimdon_lang', l); $('langsel').value = l; applyI18n();
+  // redraw whatever is on screen in the new language
+  lastKey = '';
+  if (me && me.mode === 'challenge') chLoad();
+  else if (study) { const s = document.querySelector('.screen.active')?.id; if (s === 'study') studyHome(); else if (s === 'cards') drawCard(); }
+}
+$('langsel').value = LANG; applyI18n();
+
+/* ---------- end-of-game feedback ---------- */
+let fbState = {};
+function drawReview(list) {
+  const r = $('review'); r.hidden = !(list && list.length); r.open = false;
+  if (r.hidden) return;
+  $('review-list').innerHTML = list.map((x, i) => {
+    const mark = x.ok === null ? '💬' : x.ok ? '✅' : '❌';
+    return `<div class="rv ${x.ok === null ? '' : x.ok ? 'ok' : 'bad'}"><b>${mark} ${i + 1}. ${esc(x.q)}</b>
+      <span>${t('yourAns')}: ${x.your ? esc(x.your) : `<i>${t('noAnswer')}</i>`}</span>
+      ${x.ok === false && x.right ? `<span>${t('rightAns')}: <b>${esc(x.right)}</b></span>` : ''}
+      ${x.explain ? `<span class="rv-ex">💡 ${esc(x.explain)}</span>` : ''}
+      ${x.pts ? `<span class="pts">+${x.pts}</span>` : ''}</div>`;
+  }).join('');
+}
+let emoteSet = '';
+function drawEmotes(list) {
+  const e = $('emotes'), on = !!(list && list.length && me && me.mode !== 'challenge');
+  e.hidden = !on; document.body.classList.toggle('has-emotes', on);
+  if (!on || emoteSet === list.join()) return;
+  emoteSet = list.join();
+  e.innerHTML = list.map((x, i) => `<button type="button" onclick="sendEmote(${i}, this)">${x}</button>`).join('');
+}
+let emoteAt = 0;
+async function sendEmote(i, btn) {
+  if (Date.now() - emoteAt < 1500 || !me) return;
+  emoteAt = Date.now(); buzz(15);
+  document.querySelectorAll('#emotes button').forEach(b => b.disabled = true);
+  setTimeout(() => document.querySelectorAll('#emotes button').forEach(b => b.disabled = false), 1500);
+  btn.classList.add('sent'); setTimeout(() => btn.classList.remove('sent'), 400);
+  try { await api('/api/react', {pin: me.pin, pid: me.pid, e: i}); } catch (e) {}
+}
+function finalActs(html) { $('review').hidden = true; $('final-acts').innerHTML = html || `<button class="btn ghost" onclick="leave()">${t('newGame')}</button>`; }
+function showFeedbackForm(alreadySent) {
+  fbState = {stars: 0, learned: null, recommend: null, mood: null};
+  $('fbform').hidden = !!alreadySent; $('fb-thanks').hidden = !alreadySent;
+  $('fb-stars').innerHTML = [1, 2, 3, 4, 5].map(n => `<button data-n="${n}" aria-label="${n}">★</button>`).join('');
+  document.querySelectorAll('.fbform button').forEach(b => b.classList.remove('on'));
+  $('fb-send').disabled = true;
+}
+function fbReady() { $('fb-send').disabled = !(fbState.stars && fbState.learned !== null && fbState.recommend !== null && fbState.mood); }
+document.addEventListener('click', e => {
+  const star = e.target.closest('#fb-stars button');
+  if (star) { fbState.stars = +star.dataset.n; document.querySelectorAll('#fb-stars button').forEach(b => b.classList.toggle('on', +b.dataset.n <= fbState.stars)); return fbReady(); }
+  const yn = e.target.closest('.yn button');
+  if (yn) {
+    const k = yn.parentElement.dataset.k, v = yn.dataset.v;
+    fbState[k] = k === 'mood' ? v : v === '1';
+    yn.parentElement.querySelectorAll('button').forEach(b => b.classList.toggle('on', b === yn)); fbReady();
+  }
+});
+async function sendFeedback() {
+  $('fb-send').disabled = true;
+  const path = me.mode === 'challenge' ? '/api/ch/feedback' : '/api/feedback';
+  await api(path, {pin: me.pin, pid: me.pid, ...fbState});
+  $('fbform').hidden = true; $('fb-thanks').hidden = false;
+}
+
+const params = new URLSearchParams(location.search);
+// a QR code or link with ?pin=… goes straight to the name step (when not already in a game)
+if (params.get('pin')) { $('pin-in').value = params.get('pin'); if (!recall('bilimdon_player')) checkPin(); }
+
+/* the avatar picker: Bilimdon's animated characters (avatars.js) */
+let avatarIdx = recall('bilimdon_avatar'), avatarList = [];
+function drawAvatars() {
+  $('avatars').innerHTML = avatarList.map((a, i) => `<button type="button" class="${i === avatarIdx ? 'on' : ''}" onclick="pickAvatar(${i})" aria-label="${esc(avatarName(a))}">${avatarHTML(a, 44, true)}</button>`).join('');
+  $('av-big').innerHTML = avatarHTML(avatarList[avatarIdx], 130);
+  $('av-name').textContent = avatarName(avatarList[avatarIdx]);
+}
+function pickAvatar(i) {
+  avatarIdx = i; store('bilimdon_avatar', i); drawAvatars(); buzz(15);
+  const big = $('av-big').firstElementChild; if (big) big.classList.add('jump');  // a happy jump for the new pick
+}
+fetch('/api/info').then(r => r.json()).then(info => {
+  avatarList = info.avatars || [];
+  if (!Number.isInteger(avatarIdx) || avatarIdx < 0 || avatarIdx >= avatarList.length) avatarIdx = Math.floor(Math.random() * avatarList.length);
+  drawAvatars();
+}).catch(() => {});
+
+/* the 3D avatar picker (avatar3d.js, loaded by avatars.js); the SVG picker above is the fallback */
+let av3 = null, av3Stage = null, av3Tab = 'char', av3Cfg = recall('bilimdon_av3');
+async function showAv3() {
+  const useOld = () => { if (!av3Stage) { $('av3').hidden = true; $('av-old').hidden = false; } };
+  const slow = setTimeout(useOld, 6000);  // a slow connection: offer the SVG characters meanwhile
+  const mod = await loadAvatar3D();
+  clearTimeout(slow);
+  if (!mod || $('step-avatar').hidden) return mod ? undefined : useOld();
+  av3 = mod;
+  if (!av3Cfg || !mod.parseToken(mod.makeToken(av3Cfg))) {
+    av3Cfg = {char: mod.CHAR_LIST[Math.floor(Math.random() * mod.CHAR_LIST.length)].id, acc: 'none', color: null};
+  }
+  $('av-old').hidden = true; $('av3').hidden = false;
+  if (!av3Stage) {
+    try { av3Stage = mod.createStage($('av3-stage'), av3Cfg); }
+    catch (e) { console.warn('3D stage failed', e); av3Stage = null; return useOld(); }
+  }
+  $('av3-player').textContent = $('av-player').textContent;
+  drawAv3();
+}
+function stopAv3() { if (av3Stage) { av3Stage.destroy(); av3Stage = null; } }
+function drawAv3() {
+  const m = av3, grid = $('av3-grid');
+  document.querySelectorAll('.av3-tabs button').forEach(b => b.classList.toggle('on', b.dataset.tab === av3Tab));
+  grid.className = 'av3-grid' + (av3Tab === 'color' ? ' colors' : '');
+  let items;
+  if (av3Tab === 'char') items = m.CHAR_LIST.map(c => ({id: c.id, label: c.name, on: av3Cfg.char === c.id, pic: () => m.charThumb(c.id)}));
+  else if (av3Tab === 'acc') items = m.ACC_LIST.map(a => ({id: a.id, label: a.name, on: av3Cfg.acc === a.id, pic: () => m.accThumb(a.id)}));
+  else {
+    const def = m.CHAR_LIST.find(c => c.id === av3Cfg.char).color;
+    items = [null, ...m.SWATCHES].map(c => ({id: c || '', label: c ? (m.FINISH_LIST[c] ? m.FINISH_LIST[c].name : c) : t('avDefault'),
+      on: (av3Cfg.color || null) === c, sw: c ? (m.FINISH_LIST[c] ? m.FINISH_LIST[c].css : c) : def}));
+  }
+  grid.innerHTML = items.map(it => `<button type="button" class="${it.on ? 'on' : ''}" title="${esc(it.label)}">${it.sw ? `<i style="background:${it.sw}"></i>` : '<img alt="">'}<span>${esc(it.label)}</span></button>`).join('');
+  grid.querySelectorAll('button').forEach((b, i) => b.onclick = () => av3Pick(items[i].id));
+  // the grid pictures render one at a time so the page stays responsive
+  const imgs = [...grid.querySelectorAll('img')]; let i = 0;
+  (function next() {
+    if (i >= imgs.length || !grid.contains(imgs[i])) return;
+    try { imgs[i].src = items[i].pic(); } catch (e) { console.warn(e); }
+    i++; setTimeout(next, 0);
+  })();
+  $('av3-name').textContent = avatarName(m.makeToken(av3Cfg));
+}
+function av3Pick(id) {
+  if (av3Tab === 'char') av3Cfg.char = id; else if (av3Tab === 'acc') av3Cfg.acc = id; else av3Cfg.color = id || null;
+  av3Stage && av3Stage.set(av3Cfg); store('bilimdon_av3', av3Cfg); buzz(15); drawAv3();
+}
+function av3Random() {
+  if (!av3) return;
+  const pick = a => a[Math.floor(Math.random() * a.length)];
+  av3Cfg = {char: pick(av3.CHAR_LIST).id, acc: pick(av3.ACC_LIST).id, color: Math.random() < .5 ? pick(av3.SWATCHES) : null};
+  av3Stage && av3Stage.set(av3Cfg); store('bilimdon_av3', av3Cfg); buzz(15); drawAv3();
+}
+document.querySelectorAll('.av3-tabs button').forEach(b => b.onclick = () => { av3Tab = b.dataset.tab; drawAv3(); });
+document.querySelectorAll('.av3-acts [data-act]').forEach(b => b.onclick = () => av3Stage && av3Stage.play(b.dataset.act));
+/* what the join request sends: the 3D token, or the SVG character's number */
+const chosenAvatar = () => av3Stage ? av3.makeToken(av3Cfg) : avatarIdx;
+
+/* joining has three steps: 1) the game PIN, 2) the name, 3) the avatar */
+let joinInfo = null;  // what the server said about the PIN: {mode, title, nick, roster}
+function joinStep(id) {
+  ['step-pin', 'step-name', 'step-avatar'].forEach(s => $(s).hidden = s !== id);
+  $('study-link').hidden = id !== 'step-pin';
+  if (id !== 'step-avatar') stopAv3();  // no 3D rendering in the background
+}
+function toAvatar() {
+  if (!$('name-in').value.trim()) return $('join-err').textContent = t('e_no_name');
+  $('join-err').textContent = ''; showAvatarStep();
+}
+function showAvatarStep() {
+  joinStep('step-avatar');
+  const nick = joinInfo && joinInfo.nick;
+  $('nick-note').hidden = !nick;
+  $('av-back').textContent = nick ? t('changePin') : '← ' + t('namePh');
+  $('av-player').textContent = nick ? '' : $('name-in').value.trim();
+  drawAvatars();
+  showAv3();
+}
+function avatarBack() { joinInfo && joinInfo.nick ? backToPin() : (joinStep('step-name'), setTimeout(() => $('name-in').focus(), 50)); }
+async function checkPin() {
+  const pin = $('pin-in').value.replace(/\D/g, '');
+  $('join-err').textContent = '';
+  if (pin.length !== 6) return $('join-err').textContent = t('pin6');
+  $('pin-btn').disabled = true;
+  try {
+    const r = await api('/api/pin', {pin});
+    if (!r.ok) $('join-err').textContent = r.error ? t('e_' + r.error) : t('genericErr');
+    else showNameStep(r);
+  } catch (e) { $('join-err').textContent = t('noConn'); }
+  $('pin-btn').disabled = false;
+}
+function showNameStep(info) {
+  joinInfo = info;
+  document.querySelectorAll('.join-title').forEach(el => el.textContent = '🎮 ' + (info.title || ''));
+  $('roster-note').hidden = !info.roster;
+  // "random names" games: the server picks the name, so go straight to the avatar
+  if (info.nick) return showAvatarStep();
+  joinStep('step-name'); setTimeout(() => $('name-in').focus(), 50);
+}
+function backToPin() {
+  joinInfo = null; $('join-err').textContent = '';
+  joinStep('step-pin');
+  setTimeout(() => $('pin-in').select(), 50);
+}
+async function join() {
+  const pin = $('pin-in').value.replace(/\D/g, ''), name = $('name-in').value.trim();
+  $('join-err').textContent = '';
+  if (pin.length !== 6) { backToPin(); return $('join-err').textContent = t('pin6'); }
+  if (!name && !(joinInfo && joinInfo.nick)) return $('join-err').textContent = t('e_no_name');
+  $('join-btn').disabled = true;
+  try {
+    // the name may be empty: in "random names" games the server picks one
+    const r = await api('/api/join', {pin, name, avatar: chosenAvatar()});
+    if (!r.pid) {
+      // the game went away or closed meanwhile: back to the PIN step
+      if (['no_game', 'expired', 'finished', 'locked'].includes(r.error)) backToPin();
+      // a problem with the name: back to the name step to fix it
+      else if (['name_taken', 'bad_name', 'not_in_roster', 'banned', 'no_name'].includes(r.error) && !(joinInfo && joinInfo.nick)) joinStep('step-name');
+      $('join-err').textContent = r.error ? t('e_' + r.error) : t('genericErr');
+    }
+    else {
+      stopAv3();
+      me = {pin, pid: r.pid, mode: r.mode === 'challenge' ? 'challenge' : 'live'}; store('bilimdon_player', me);
+      me.mode === 'challenge' ? chLoad() : connect();
+    }
+  } catch (e) { $('join-err').textContent = t('noConn'); }
+  $('join-btn').disabled = false;
+}
+function leave(msg) {
+  stop && stop(); clearInterval(cdTimer); me = null; study = null; store('bilimdon_player'); $('pbar').style.display = 'none'; lastKey = '';
+  drawEmotes(null);
+  document.body.classList.remove('ok-bg', 'bad-bg', 'neutral-bg');
+  if (params.get('study') || params.get('preview')) history.replaceState(null, '', location.pathname);
+  backToPin(); $('join-err').textContent = msg || ''; show('join');
+}
+function connect() {
+  stop && stop();
+  stop = listen(`/api/events?pin=${me.pin}&pid=${me.pid}`, render, () => leave(t('gameOver')));
+}
+function buzz(p) {
+  // Browsers only allow vibration after the user has tapped the page
+  const active = !navigator.userActivation || navigator.userActivation.hasBeenActive;
+  try { if (active && navigator.vibrate) navigator.vibrate(p); } catch (e) {}
+}
+function waitScreen(a, b, av) {
+  $('wait-title').textContent = a; $('wait-sub').textContent = b;
+  // in the lobby the player sees their own character big, as on the avatar step
+  $('wait-av').hidden = !av; $('wait-av').innerHTML = av ? avatarHTML(av, 120) : '';
+  $('wait').querySelector('.spin').hidden = !!av;
+  show('wait');
+}
+function topBar(v) {
+  $('pbar').style.display = 'flex';
+  $('pb-name').innerHTML = (v.avatar ? avatarHTML(v.avatar, 30) + ' ' : '') + esc(v.name) + (v.team ? ` <span class="team" style="background:${esc(v.team.color)}">${esc(v.team.name)}</span>` : '');
+  $('pb-score').textContent = v.score + ' ' + t('pts');
+}
+
+/* ---------- answering (shared by live games, assignments and practice) ---------- */
+let picked = [], curType = '', nItems = 0;
+function drawPicks() {
+  document.querySelectorAll('.pbtn').forEach((b, j) => {
+    const k = picked.indexOf(j); b.classList.toggle('sel', k >= 0);
+    b.querySelector('.mark')?.remove();
+    if (k >= 0) b.insertAdjacentHTML('beforeend', `<span class="mark">${curType === 'order' ? k + 1 : '✔'}</span>`);
+  });
+  const send = $('send-btn'); if (send) send.disabled = curType === 'order' ? picked.length !== nItems : !picked.length;
+}
+function tap(j) {
+  if (curType === 'multi' || curType === 'order') {
+    picked = picked.includes(j) ? picked.filter(x => x !== j) : [...picked, j];
+    buzz(15); drawPicks();
+  } else choose(j);
+}
+function sendTyped() { const v = $('typein').value.trim(); if (v) choose(v); }
+async function choose(j) {
+  document.querySelectorAll('.pbtn, #pact button').forEach(b => b.disabled = true);
+  if (study) return studyAnswer(j);
+  if (me.mode === 'challenge') { clearInterval(cdTimer); return chRender(await chCall('/api/ch/answer', {pin: me.pin, pid: me.pid, choice: j})); }
+  waitScreen(t('answered'), t('waitOthers'));
+  // weak school Wi-Fi: if the answer doesn't get through, send it again a few times
+  for (let attempt = 0; attempt < 5; attempt++) {
+    try {
+      const r = await api('/api/answer', {pin: me.pin, pid: me.pid, choice: j});
+      // after a lost reply the first try may have counted already, so a "no" on a retry is not "too late"
+      if (!r.ok && attempt === 0) waitScreen(t('late'), t('waitResults'));
+      else if (attempt > 0 && $('wait').classList.contains('active')) waitScreen(t('answered'), t('waitOthers'));
+      return;
+    } catch (e) {
+      if (attempt === 0) waitScreen(t('noConn'), t('retry'));
+      await new Promise(res => setTimeout(res, 800 + attempt * 700));
+    }
+  }
+  waitScreen(t('noConn'), t('waitResults'));
+}
+// q: {type, answers, img, mult, qtext, video, slider, ar, ai}
+function drawQuestion(q, qi, total) {
+  curType = q.type; picked = []; nItems = q.answers.length;
+  $('play-q').textContent = t('qOf', {n: qi + 1, t: total}) + (I18N.uz['t_' + q.type] ? ' · ' + t('t_' + q.type) : '')
+    + (q.type === 'slide' ? ' · ' + t('info') : q.mult === 2 ? ' · ' + t('x2') : q.mult === 0 && !NEUTRAL.includes(q.type) && !study ? ' · ' + t('noPts') : '');
+  $('play-text').hidden = !q.qtext; $('play-text').textContent = q.qtext || '';
+  // in live games the big screen reads aloud; on one's own (assignment, practice) the phone can
+  if ('speechSynthesis' in window) speechSynthesis.cancel();
+  $('speak-btn').hidden = !q.qtext || !('speechSynthesis' in window) || !(study || (me && me.mode === 'challenge'));
+  speakText = [q.qtext, ...(['quiz', 'tf', 'multi', 'order'].includes(q.type) ? q.answers.map((a, j) => a ? `${KEYS[j]}: ${a}` : '') : [])].filter(Boolean).join('. ');
+  $('play-video').innerHTML = q.video && q.video.id ? `<iframe src="https://www.youtube-nocookie.com/embed/${esc(q.video.id)}?start=${+q.video.start || 0}&rel=0" allow="encrypted-media; fullscreen" allowfullscreen title="Video"></iframe>` : '';
+  const img = $('play-img'); img.hidden = !q.img || !!$('play-video').innerHTML || q.type === 'pin'; if (q.img) { img.src = q.img; img.onerror = () => img.hidden = true; }
+  buzz(40);
+  const box = $('pbtns'), act = $('pact'), sendBtn = `<button class="btn alt" onclick="sendTyped()">${t('send')}</button>`;
+  if (q.type === 'wordcloud' || q.type === 'open' || q.type === 'brainstorm') {
+    box.className = 'pbtns free';
+    box.innerHTML = q.type !== 'wordcloud'
+      ? `<textarea class="typein" id="typein" maxlength="${q.type === 'open' ? 250 : 80}" rows="${q.type === 'open' ? 4 : 3}" placeholder="${esc(t(q.type === 'open' ? 'openPh' : 'ideaPh'))}" style="font-size:20px;text-align:left"></textarea>`
+      : `<input class="typein" id="typein" maxlength="20" placeholder="${esc(t('wordPh'))}" autocomplete="off" onkeydown="if(event.key==='Enter')sendTyped()">`;
+    act.innerHTML = sendBtn;
+    show('play'); setTimeout(() => $('typein').focus(), 50);
+    return;
+  }
+  if (q.type === 'slider') {
+    const s = q.slider, steps = Math.round((s.max - s.min) / s.step), start = s.min + Math.round(steps / 2) * s.step;
+    const dec = (String(s.step).split('.')[1] || '').length;
+    box.className = 'pbtns free';
+    box.innerHTML = `<div class="slbox"><div class="slval"><span id="slval">${start.toFixed(dec)}</span> <small>${esc(s.unit || '')}</small></div>
+      <input type="range" id="slin" min="${s.min}" max="${s.max}" step="${s.step}" value="${start}" oninput="$('slval').textContent=(+this.value).toFixed(${dec})">
+      <div class="sllbl"><span>${s.min}</span><span>${s.max}</span></div>
+      <div class="slnudge"><button class="btn ghost" onclick="nudge(-1)">−</button><button class="btn ghost" onclick="nudge(1)">+</button></div></div>`;
+    act.innerHTML = `<button class="btn alt" onclick="choose(+$('slin').value)">${t('send')}</button>`;
+    return show('play');
+  }
+  if (q.type === 'pin') {
+    box.className = 'pbtns free';
+    box.innerHTML = `<div class="pinbox" onclick="pinTap(event)"><img src="${esc(q.img)}" alt="" draggable="false"><div class="pinmark" id="pinmark" hidden></div></div>
+      <p style="text-align:center;font-weight:800;margin-top:8px;opacity:.9">${t('pinHint')}</p>`;
+    act.innerHTML = `<button class="btn alt" id="send-btn" disabled onclick="choose(pinAt)">${t('send')}</button>`;
+    pinAt = null;
+    return show('play');
+  }
+  if (q.type === 'type') {
+    box.className = 'pbtns free';
+    box.innerHTML = `<input class="typein" id="typein" maxlength="60" placeholder="${esc(t('typePh'))}" autocomplete="off" onkeydown="if(event.key==='Enter')sendTyped()">`;
+    act.innerHTML = sendBtn;
+    show('play'); setTimeout(() => $('typein').focus(), 50);
+    return;
+  }
+  box.className = 'pbtns' + (q.answers.length === 2 ? ' n2' : '');
+  const pics = q.ai || [];
+  box.innerHTML = q.answers.map((a, j) => `<button class="pbtn c${j}${pics[j] ? ' haspic' : ''}" onclick="tap(${j})"><b>${KEYS[j]}</b>${pics[j] ? `<img src="${esc(pics[j])}" alt="">` : ''}${esc(a)}</button>`).join('');
+  act.innerHTML = q.type === 'multi' || q.type === 'order'
+    ? `<button class="btn ghost" style="flex:1" onclick="picked=[];drawPicks()">${t('reset')}</button><button class="btn alt" style="flex:2" id="send-btn" onclick="choose(curType==='multi'?[...picked].sort():picked)" disabled>${t('send')}</button>`
+    : '';
+  if (q.type === 'order') $('play-q').textContent += t('orderHint');
+  show('play');
+}
+let speakText = '';
+function speakQuestion() {
+  speechSynthesis.cancel();
+  const u = new SpeechSynthesisUtterance(speakText), voices = speechSynthesis.getVoices();
+  const want = {uz: /^(uz|tr)/i, ru: /^ru/i, en: /^en/i}[LANG];
+  const v = voices.find(x => want.test(x.lang));
+  if (v) { u.voice = v; u.lang = v.lang; } else u.lang = {uz: 'uz-UZ', ru: 'ru-RU', en: 'en-US'}[LANG];
+  u.rate = .95; speechSynthesis.speak(u);
+}
+let pinAt = null;
+function pinTap(e) {
+  const r = e.currentTarget.querySelector('img').getBoundingClientRect();
+  if (e.clientY > r.bottom || e.clientX > r.right) return;
+  pinAt = {x: Math.round(Math.max(0, Math.min(100, (e.clientX - r.left) / r.width * 100)) * 100) / 100,
+           y: Math.round(Math.max(0, Math.min(100, (e.clientY - r.top) / r.height * 100)) * 100) / 100};
+  const m = $('pinmark'); m.hidden = false; m.style.left = pinAt.x + '%'; m.style.top = pinAt.y + '%';
+  $('send-btn').disabled = false; buzz(15);
+}
+function nudge(d) {
+  const s = $('slin'); s.value = +s.value + d * +s.step; s.dispatchEvent(new Event('input')); buzz(10);
+}
+const explainHtml = x => x ? `<div class="explain">💡 ${esc(x)}</div>` : '';
+// after a question: the right answer (only when the player missed it) and the teacher's explanation
+function solText(v) {
+  const missed = v.last && !v.last.ok && !v.last.poll && v.right;
+  return (missed ? `<small style="opacity:.8">${t('answerIs')}</small><br><b>${esc(v.right)}</b>` : '') + explainHtml(v.explain);
+}
+function drawFeedback(l, rankText, solutionHtml) {
+  document.body.classList.remove('ok-bg', 'bad-bg', 'neutral-bg');
+  l = l || {ok: false, pts: 0, timeout: true};
+  if (l.poll) {
+    document.body.classList.add('neutral-bg');
+    $('fb-text').innerHTML = l.timeout ? t('timeout')
+      : ['wordcloud', 'open', 'brainstorm'].includes(l.kind) ? `${t('textOk')}<small>${t('textSub')}</small>` : `${t('voteOk')}<small>${t('voteSub')}</small>`;
+  } else {
+    document.body.classList.add(l.ok ? 'ok-bg' : 'bad-bg');
+    buzz(l.ok ? [60, 60, 60] : [300]);
+    $('fb-text').innerHTML = (l.ok ? t('correct') : l.timeout ? t('timeout') : t('wrong')) +
+      (study ? '' : `<small>+${l.pts} ${t('pts')}${l.ok && l.streak > 1 ? ' · ' + t('streak', {n: l.streak}) : ''}</small>`);
+  }
+  $('fb-rank').textContent = rankText; $('fb-rank').hidden = !rankText;
+  $('fb-sol').hidden = !solutionHtml; $('fb-sol').innerHTML = solutionHtml || '';
+  show('fb-screen');
+}
+function nextStep() { study ? testNext() : chNext(); }
+
+/* ---------- live game ---------- */
+function render(v) {
+  topBar(v); $('ptimer').textContent = ''; $('fb-next').style.display = 'none'; $('fb-sol').hidden = true;
+  drawEmotes(v.emotes);
+  const key = v.state + ':' + v.qi + ':' + !!(v.answered || v.voted) + ':' + !!v.paused + ':' + (v.reading > 0);
+  if (key === lastKey) return;
+  // pausing must not wipe what the player was typing: keep the question on screen, just block it
+  const resumed = lastKey === v.state + ':' + v.qi + ':false:true:false' && !v.paused && $('play').classList.contains('play-paused');
+  lastKey = key; clearInterval(cdTimer); $('ptimer').textContent = '';
+  document.body.classList.remove('ok-bg', 'bad-bg', 'neutral-bg');
+  if (v.state === 'lobby') waitScreen(t('inGame'), t('inGameSub', {name: v.name}), v.avatar);
+  else if (v.state === 'question') {
+    if (v.type === 'slide') return waitScreen(t('lookScreen'), t('slideSub'));
+    if (v.reading > 0) {  // reading time: the question is on the big screen, answers open in a moment
+      waitScreen(t('getReady'), v.qtext || t('getReadySub'));
+      return countdown($('ptimer'), v.reading);
+    }
+    if (v.answered) return waitScreen(t('answered'), t('waitOthers'));
+    if (v.paused) {
+      if ($('play').classList.contains('active')) { $('play').classList.add('play-paused'); return; }
+      return waitScreen(t('paused'), t('pausedSub'));
+    }
+    $('play').classList.remove('play-paused');
+    if (resumed) return show('play');
+    drawQuestion({type: v.type, answers: v.answers, img: v.img, mult: v.mult, qtext: v.qtext, slider: v.slider, ar: v.ar, ai: v.ai}, v.qi, v.total);
+  } else if (v.state === 'vote') {
+    // brainstorm round 2: like up to 3 of the other players' ideas
+    if (v.voted) return waitScreen(t('votedOk'), t('waitOthers'));
+    if (!v.ideas.length) return waitScreen(t('lookScreen'), t('waitOthers'));
+    picks.clear();
+    $('play-q').textContent = t('voteTitle', {n: v.maxVotes}); $('play-text').hidden = true; $('speak-btn').hidden = true;
+    $('play-video').innerHTML = ''; $('play-img').hidden = true;
+    $('pbtns').className = 'pbtns free';
+    $('pbtns').innerHTML = `<div class="ideas-pick">${v.ideas.map(x => `<button type="button" data-i="${x.i}" onclick="pickIdea(this, ${v.maxVotes})">💡 ${esc(x.text)}</button>`).join('')}</div>`;
+    $('pact').innerHTML = `<button class="btn alt" id="vote-btn" disabled onclick="sendVote()">${t('voteSend')}</button>`;
+    countdown($('ptimer'), v.remaining);
+    show('play');
+  } else if (v.state === 'results' || v.state === 'board') {
+    if (!v.last) return waitScreen(t('inGame'), t('nextQ'));  // joined mid-game
+    drawFeedback(v.last, t('rank', {r: v.rank, n: v.nplayers}) + (v.team && v.team.rank ? ' · ' + t('teamRank', {team: v.team.name, r: v.team.rank}) : ''), solText(v));
+  } else if (v.state === 'final') {
+    const medal = ['🥇', '🥈', '🥉'][v.rank - 1] || '🎉';
+    $('final-text').innerHTML = `${medal}<br>${t('place', {r: v.rank})}<small>${t('finalSub', {s: v.score, n: v.nplayers})}${v.team && v.team.rank ? '<br>' + esc(t('teamRank', {team: v.team.name, r: v.team.rank})) : ''}</small>`;
+    showFeedbackForm(v.feedback_sent); finalActs(); drawReview(v.review);
+    show('final'); if (v.rank <= 3) confetti();
+  }
+}
+
+const picks = new Set();
+function pickIdea(btn, max) {
+  const i = +btn.dataset.i;
+  if (picks.has(i)) picks.delete(i); else if (picks.size < max) picks.add(i); else return buzz(80);
+  btn.classList.toggle('on', picks.has(i)); buzz(15);
+  $('vote-btn').disabled = !picks.size;
+  $('vote-btn').textContent = picks.size ? `${t('voteSend')} (${picks.size})` : t('voteSend');
+}
+async function sendVote() {
+  $('vote-btn').disabled = true;
+  try { await api('/api/answer', {pin: me.pin, pid: me.pid, choice: [...picks]}); } catch (e) { $('vote-btn').disabled = false; }
+}
+
+/* ---------- assignment (self-paced) ---------- */
+// assignment requests: on a network error show "no connection" and keep retrying until it gets through
+async function chCall(path, body) {
+  for (let attempt = 0; ; attempt++) {
+    try { return await api(path, body); }
+    catch (e) {
+      waitScreen(t('noConn'), t('retry'));
+      await new Promise(res => setTimeout(res, Math.min(1000 + attempt * 1000, 5000)));
+      if (!me) return {phase: 'gone'};
+      // after the first failure only ask for the current state: the server already knows what got through
+      if (attempt >= 1 && path !== '/api/ch/state') { path = '/api/ch/state'; body = {pin: me.pin, pid: me.pid}; }
+    }
+  }
+}
+async function chLoad() { chRender(await chCall('/api/ch/state', {pin: me.pin, pid: me.pid})); }
+async function chNext() { chRender(await chCall('/api/ch/next', {pin: me.pin, pid: me.pid})); }
+function chRender(v) {
+  if (!v || v.error === 'no_game' || v.phase === 'gone') return leave(t('chGone'));
+  if (v.error) return chLoad();
+  topBar(v); clearInterval(cdTimer); $('ptimer').textContent = ''; $('fb-next').style.display = 'none'; $('fb-sol').hidden = true;
+  document.body.classList.remove('ok-bg', 'bad-bg', 'neutral-bg');
+  if (v.expired && v.phase !== 'done') {
+    $('final-text').innerHTML = `⌛<br>${t('expired')}<small>${t('expiredSub', {s: v.score})}</small>`;
+    $('fbform').hidden = $('fb-thanks').hidden = true; finalActs();
+    return show('final');
+  }
+  if (v.phase === 'intro') {
+    $('in-title').textContent = v.title; $('in-desc').textContent = v.description || '';
+    $('in-meta').textContent = t('qCount', {n: v.total, d: new Date(v.deadline * 1000).toLocaleString(LANG)});
+    return show('intro');
+  }
+  if (v.phase === 'question') {
+    const q = v.question;
+    if (q.type === 'slide') {
+      drawQuestion({type: 'slide', answers: [], img: q.img, video: q.video, mult: 0, qtext: q.q}, v.qi, v.total);
+      $('pbtns').className = 'pbtns free'; $('pbtns').innerHTML = q.body ? `<div class="pbody">${esc(q.body)}</div>` : '';
+      $('pact').innerHTML = `<button class="btn alt" onclick="chNext()">${t('cont')}</button>`;
+      return;
+    }
+    drawQuestion({type: q.type, answers: q.answers, img: q.img, video: q.video, mult: q.mult, qtext: q.q, slider: q.slider, ar: q.ar, ai: q.ai}, v.qi, v.total);
+    countdown($('ptimer'), v.remaining);
+    // when time is up, ask the server again: it records the question as missed
+    const until = Date.now() + v.remaining * 1000 + 2500, qi = v.qi;
+    const watch = setInterval(() => { if (Date.now() > until) { clearInterval(watch); if (curType && me && $('play').classList.contains('active') && lastChQi === qi) chLoad(); } }, 500);
+    lastChQi = qi;
+    return;
+  }
+  if (v.phase === 'feedback') {
+    drawFeedback(v.last, t('nowRank', {r: v.rank, n: v.nplayers}), solText(v));
+    $('fb-next').textContent = v.qi + 1 >= v.total ? t('seeResult') : t('nextQBtn');
+    $('fb-next').style.display = 'block';
+    return;
+  }
+  if (v.phase === 'done') {
+    const medal = ['🥇', '🥈', '🥉'][v.rank - 1] || '🎉';
+    $('final-text').innerHTML = `${medal}<br>${t('done')}<small>${t('doneSub', {s: v.score, c: v.correct, t: v.scored, r: v.rank, n: v.nplayers})}</small>`;
+    showFeedbackForm(v.feedback_sent); finalActs(); drawReview(v.review);
+    show('final'); if (v.rank <= 3) confetti();
+  }
+}
+let lastChQi = -1;
+
+/* ---------- practice mode (flashcards + self-test), opened with ?study=CODE ---------- */
+let study = null;  // {code, title, description, questions}
+function askStudy() {
+  const code = (prompt(t('studyPrompt')) || '').trim().toUpperCase();
+  if (code) loadStudy(code);
+}
+async function loadStudy(code) {
+  try {
+    const r = await fetch('/api/study?code=' + encodeURIComponent(code));
+    if (!r.ok) throw new Error();
+    study = {code, ...(await r.json())};
+  } catch (e) { study = null; return leave(t('studyGone')); }
+  history.replaceState(null, '', '?study=' + code);
+  studyHome();
+}
+function studyHome() {
+  document.body.classList.remove('ok-bg', 'bad-bg', 'neutral-bg'); $('pbar').style.display = 'none';
+  $('st-title').textContent = study.title; $('st-desc').textContent = study.description || '';
+  $('st-meta').textContent = t('nQ', {n: study.questions.filter(q => q.type !== 'slide').length});
+  show('study');
+}
+const norm = s => String(s).toLowerCase().replace(/[ʻ’`]/g, "'").split(/\s+/).filter(Boolean).join(' ');
+const optLabel = (q, i) => q.a[i] ? esc(q.a[i]) : (q.ai && q.ai[i] ? `<img src="${esc(q.ai[i])}" alt="" style="max-height:80px;vertical-align:middle">` : t('picture', {k: i + 1}));
+// the right answer as HTML, for the back of a flashcard and for practice feedback
+function solutionHtml(q) {
+  switch (q.type) {
+    case 'quiz': case 'tf': return optLabel(q, q.c);
+    case 'multi': return q.cs.map(i => optLabel(q, i)).join(', ');
+    case 'type': return q.a.map(esc).join(' / ');
+    case 'order': return q.a.map((x, i) => `${i + 1}. ${esc(x)}`).join('<br>');
+    case 'slider': return `${esc(String(q.slider.ans))} ${esc(q.slider.unit || '')}${q.slider.tol ? ` (±${esc(String(q.slider.tol))})` : ''}`;
+    case 'pin': return `<div class="fpin"><img src="${esc(q.img)}" alt=""><i style="left:${q.pin.x}%;top:${q.pin.y}%;width:${2 * q.pin.r / q.ar}%;height:${2 * q.pin.r}%"></i></div>`;
+    case 'slide': return esc(q.body || '');
+    default: return '';
+  }
+}
+// flashcards
+let deck = [], deckPos = 0, known = new Set();
+function startCards(onlyUnknown) {
+  const all = study.questions.map((q, i) => i);
+  deck = onlyUnknown ? all.filter(i => !known.has(i)) : all;
+  if (!onlyUnknown) known = new Set();
+  deckPos = 0; drawCard(); show('cards');
+}
+function drawCard() {
+  if (deckPos >= deck.length) {
+    const left = deck.filter(i => !known.has(i)).length;
+    $('final-text').innerHTML = `🃏<br>${t('cardsDone')}<small>${left ? t('cardsSum', {k: known.size, a: left}) : t('allKnown')}</small>`;
+    $('fbform').hidden = $('fb-thanks').hidden = true;
+    finalActs((left ? `<button class="btn alt" onclick="startCards(true)">${t('repeatUnknown')}</button>` : '') +
+      `<button class="btn" onclick="startCards()">${t('restart')}</button><button class="btn ghost" onclick="studyHome()">${t('back')}</button>`);
+    if (!left) confetti();
+    return show('final');
+  }
+  const q = study.questions[deck[deckPos]];
+  $('flash').classList.remove('flipped');
+  $('fc-prog').textContent = `${deckPos + 1} / ${deck.length}`;
+  $('fc-front').innerHTML = `${q.img && q.type !== 'pin' ? `<img src="${esc(q.img)}" alt="">` : ''}<div>${esc(q.q)}</div><small>${t('tapFlip')}</small>`;
+  $('fc-back').innerHTML = `<small>${t('answerIs')}</small><div>${solutionHtml(q)}</div>`;
+}
+function cardAnswer(knowIt) {
+  const i = deck[deckPos];
+  if (knowIt) known.add(i); else known.delete(i);
+  deckPos++; drawCard(); buzz(15);
+}
+// self-test: like an assignment, but checked right here, with no timer and nothing saved
+let test = null;  // {order: [question index], pos, correct, perm}
+function startTest() {
+  const order = study.questions.map((q, i) => i).filter(i => study.questions[i].type !== 'slide');
+  for (let i = order.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [order[i], order[j]] = [order[j], order[i]]; }
+  test = {order, pos: -1, correct: 0, perm: []};
+  testNext();
+}
+function testNext() {
+  test.pos++;
+  document.body.classList.remove('ok-bg', 'bad-bg', 'neutral-bg'); $('fb-next').style.display = 'none'; $('fb-sol').hidden = true;
+  if (test.pos >= test.order.length) {
+    const n = test.order.length;
+    $('final-text').innerHTML = `${test.correct === n ? '🏆' : '📖'}<br>${t('testDone')}<small>${t('testSum', {c: test.correct, t: n})}</small>`;
+    $('fbform').hidden = $('fb-thanks').hidden = true;
+    finalActs(`<button class="btn alt" onclick="startTest()">${t('restart')}</button><button class="btn ghost" onclick="studyHome()">${t('back')}</button>`);
+    if (test.correct === n) confetti();
+    return show('final');
+  }
+  const q = study.questions[test.order[test.pos]];
+  let answers = q.a;
+  test.perm = [];
+  if (q.type === 'order') {
+    test.perm = q.a.map((_, i) => i);
+    while (test.perm.length > 1 && test.perm.every((v, i) => v === i)) test.perm.sort(() => Math.random() - .5);
+    answers = test.perm.map(i => q.a[i]);
+  }
+  if (['type', 'slider', 'pin'].includes(q.type)) answers = [];
+  drawQuestion({type: q.type, answers, img: q.img, video: q.video, mult: 1, qtext: q.q, ai: q.ai,
+    slider: q.slider && {min: q.slider.min, max: q.slider.max, step: q.slider.step, unit: q.slider.unit}, ar: q.ar}, test.pos, test.order.length);
+}
+function studyAnswer(choice) {
+  const q = study.questions[test.order[test.pos]];
+  let ok = false;
+  if (q.type === 'quiz' || q.type === 'tf') ok = choice === q.c;
+  else if (q.type === 'multi') ok = JSON.stringify([...choice].sort()) === JSON.stringify(q.cs);
+  else if (q.type === 'type') ok = q.a.some(x => norm(x) === norm(choice));
+  else if (q.type === 'order') ok = choice.map(i => test.perm[i]).every((v, i) => v === i);
+  else if (q.type === 'slider') ok = Math.abs(choice - q.slider.ans) <= q.slider.tol + 1e-9;
+  else if (q.type === 'pin') ok = Math.hypot((choice.x - q.pin.x) * q.ar, choice.y - q.pin.y) <= q.pin.r;
+  if (ok) test.correct++;
+  drawFeedback({ok, pts: 0}, `${test.correct} / ${test.pos + 1}`, (ok ? '' : `<small style="opacity:.8">${t('answerIs')}</small><br>${solutionHtml(q)}`) + explainHtml(q.explain));
+  $('fb-next').textContent = test.pos + 1 >= test.order.length ? t('seeResult') : t('nextQBtn');
+  $('fb-next').style.display = 'block';
+}
+
+if (params.get('preview')) {
+  // the host's "try it" from the editor: the checked draft was handed over through this browser's storage
+  const p = recall('bilimdon_preview');
+  if (p && Array.isArray(p.questions) && p.questions.length) { study = {code: '', preview: true, ...p}; studyHome(); }
+  else leave(t('studyGone'));
+}
+else if (params.get('study')) loadStudy(params.get('study').trim().toUpperCase());
+else if (me) me.mode === 'challenge' ? chLoad() : connect();
+</script>
+</body>
+</html>

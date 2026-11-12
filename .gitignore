@@ -1,0 +1,19 @@
+# Site data: teacher accounts, passwords, quizzes, uploads and backups.
+# The server creates this folder by itself on first start; it must never go to GitHub.
+data/
+
+# Python
+__pycache__/
+*.pyc
+
+# Keys and local settings
+.env
+*.env
+*.key
+
+# Editors and systems
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+desktop.ini
